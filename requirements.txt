@@ -1,0 +1,4 @@
+# Il progetto utilizza solo la standard library di Python
+# Nessuna dipendenza esterna richiesta
+
+python>=3.8

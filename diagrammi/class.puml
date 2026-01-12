@@ -1,0 +1,87 @@
+@startuml Class Diagram - Sistema Ticketing Cinema
+
+class Cinema {
+  - nome: str
+  - sale: List[Sala]
+  + aggiungi_sala(sala: Sala)
+  + ottieni_spettacoli_disponibili(): List[Spettacolo]
+  + cerca_spettacolo(id: str): Spettacolo
+}
+
+class Sala {
+  - numero_sala: int
+  - capacita: int
+  - posti: Dict[str, Posto]
+  + inizializza_posti()
+  + verifica_disponibilita(posto_id: str): bool
+  + prenota_posto(posto_id: str): bool
+}
+
+class Spettacolo {
+  - id: str
+  - titolo_film: str
+  - orario: str
+  - sala: Sala
+  - prezzo: float
+  + ottieni_posti_disponibili(): List[str]
+  + verifica_capienza(): int
+}
+
+class Posto {
+  - id: str
+  - occupato: bool
+  - fila: str
+  - numero: int
+  + prenota()
+  + libera()
+}
+
+class Cliente {
+  - id: str
+  - nome: str
+  - email: str
+  - telefono: str
+  + registra_dati()
+  + validazione_email(): bool
+}
+
+class Biglietto {
+  - codice: str
+  - spettacolo: Spettacolo
+  - posto: Posto
+  - cliente: Cliente
+  - prezzo: float
+  - data_emissione: datetime
+  + genera_codice(): str
+  + stampa_biglietto(): str
+}
+
+class Ordine {
+  - id: str
+  - cliente: Cliente
+  - biglietti: List[Biglietto]
+  - totale: float
+  - stato: str
+  - data_ordine: datetime
+  + aggiungi_biglietto(biglietto: Biglietto)
+  + calcola_totale(): float
+  + conferma_ordine()
+}
+
+class GestorePagamenti {
+  + elabora_pagamento(ordine: Ordine): bool
+  + verifica_transazione(): bool
+}
+
+Cinema "1" *-- "1..*" Sala
+Sala "1" *-- "20..*" Posto
+Cinema "1" -- "1..*" Spettacolo
+Spettacolo "1" -- "1" Sala
+Biglietto "1" -- "1" Spettacolo
+Biglietto "1" -- "1" Posto
+Biglietto "1" -- "1" Cliente
+Ordine "1" *-- "1..*" Biglietto
+Ordine "1" -- "1" Cliente
+Ordine "1" -- "1" GestorePagamenti
+
+@enduml

@@ -1,0 +1,43 @@
+@startuml C4 Component - API REST
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Diagramma Component - API REST Sistema Ticketing
+
+Container(web_app, "Applicazione Web", "Browser")
+Container(mobile_app, "App Mobile", "iOS")
+
+Container_Boundary(api, "API REST - FastAPI") {
+    Component(controller_film, "Controller Film", "FastAPI Router", "Gestisce richieste per visualizzare film e spettacoli")
+    Component(controller_prenotazione, "Controller Prenotazione", "FastAPI Router", "Gestisce il processo di prenotazione")
+    Component(controller_ordine, "Controller Ordine", "FastAPI Router", "Gestisce gli ordini e i biglietti")
+    
+    Component(servizio_cinema, "Servizio Cinema", "Python Class", "Logica business per gestione cinema e spettacoli")
+    Component(servizio_biglietto, "Servizio Biglietto", "Python Class", "Logica business per generazione biglietti")
+    Component(servizio_pagamento, "Servizio Pagamento", "Python Class", "Gestisce l'integrazione con sistemi di pagamento")
+    
+    Component(repository, "Repository", "SQLAlchemy", "Accesso ai dati persistenti")
+}
+
+ContainerDb(db, "Database", "SQLite")
+System_Ext(pagamento_ext, "Gateway Pagamento")
+
+Rel(web_app, controller_film, "Richiede film", "JSON/HTTPS")
+Rel(mobile_app, controller_prenotazione, "Prenota posto", "JSON/HTTPS")
+Rel(web_app, controller_ordine, "Conferma ordine", "JSON/HTTPS")
+
+Rel(controller_film, servizio_cinema, "Usa")
+Rel(controller_prenotazione, servizio_cinema, "Usa")
+Rel(controller_prenotazione, servizio_biglietto, "Usa")
+Rel(controller_ordine, servizio_biglietto, "Usa")
+Rel(controller_ordine, servizio_pagamento, "Usa")
+
+Rel(servizio_cinema, repository, "Legge/Scrive dati")
+Rel(servizio_biglietto, repository, "Legge/Scrive dati")
+Rel(servizio_pagamento, pagamento_ext, "Elabora pagamento", "HTTPS")
+
+Rel(repository, db, "Query SQL")
+
+@enduml

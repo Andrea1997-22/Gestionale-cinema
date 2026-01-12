@@ -1,0 +1,42 @@
+@startuml Deployment Diagram - Sistema Ticketing Cinema
+
+node "Server Linux" <<Ubuntu 22.04 LTS>> {
+  node "Container Docker" {
+    component [API REST FastAPI] as API
+    note right of API
+      CPU: 2 cores
+      RAM: 4GB
+      Storage: 20GB
+    end note
+  }
+  
+  database "Database SQLite" as DB {
+    component [cinema.db]
+  }
+  
+  API --> DB : JDBC
+}
+
+node "Laptop Cliente" <<Windows/MacOS/Linux>> {
+  component [Browser Web] as Browser
+  component [Applicazione Desktop] as Desktop
+}
+
+node "Smartphone" <<iOS>> {
+  component [App Mobile Cinema] as MobileApp
+  note left of MobileApp
+    iOS 15+
+    React Native
+  end note
+}
+
+cloud "Internet" {
+}
+
+Browser --> Internet : HTTPS
+Desktop --> Internet : HTTPS
+MobileApp --> Internet : HTTPS
+
+Internet --> API : REST API\nJSON
+
+@enduml

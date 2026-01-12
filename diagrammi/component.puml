@@ -1,0 +1,50 @@
+@startuml Component Diagram - Sistema Ticketing Cinema
+
+package "Sistema Ticketing Cinema" {
+  
+  component [Interfaccia Cliente] as UI
+  component [Controller Prenotazione] as Controller
+  component [Gestore Cinema] as Cinema
+  component [Gestore Biglietti] as Biglietti
+  component [Gestore Pagamenti] as Pagamenti
+  component [Gestore Notifiche] as Notifiche
+  
+  interface "IPrenotazione" as IPreno
+  interface "IGestioneSpettacoli" as ISpett
+  interface "IPagamento" as IPag
+  interface "INotifica" as INot
+  
+  UI --> IPreno
+  IPreno -- Controller
+  
+  Controller --> ISpett
+  ISpett -- Cinema
+  
+  Controller --> Biglietti
+  
+  Controller --> IPag
+  IPag -- Pagamenti
+  
+  Pagamenti --> INot
+  INot -- Notifiche
+}
+
+database "Database SQLite" as DB {
+  component [Repository Cinema] as RepoCinema
+  component [Repository Biglietti] as RepoBiglietti
+  component [Repository Clienti] as RepoClienti
+}
+
+Cinema --> RepoCinema
+Biglietti --> RepoBiglietti
+Controller --> RepoClienti
+
+cloud "Servizi Esterni" {
+  component [Gateway Pagamento] as Gateway
+  component [Servizio Email] as Email
+}
+
+Pagamenti ..> Gateway : <<use>>
+Notifiche ..> Email : <<use>>
+
+@enduml
